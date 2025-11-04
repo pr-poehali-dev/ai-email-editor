@@ -19,6 +19,8 @@ interface Event {
   program: string;
   speakers: string;
   pains: string;
+  ragLinks: string;
+  htmlTemplate: string;
 }
 
 interface EmailOutput {
@@ -54,7 +56,9 @@ const Index = () => {
       date: '15 декабря 2024',
       program: 'Keynote: Будущее ИИ (10:00), Воркшоп: Практика ML (14:00), Панель: Этика ИИ (16:00)',
       speakers: 'Анна Петрова (CEO AI Labs), Дмитрий Смирнов (ML Engineer Google), Елена Иванова (Data Scientist)',
-      pains: 'Сложно внедрить ИИ в бизнес, нехватка данных для обучения моделей, высокая стоимость инфраструктуры'
+      pains: 'Сложно внедрить ИИ в бизнес, нехватка данных для обучения моделей, высокая стоимость инфраструктуры',
+      ragLinks: '',
+      htmlTemplate: ''
     }
   ]);
 
@@ -64,7 +68,9 @@ const Index = () => {
     date: '',
     program: '',
     speakers: '',
-    pains: ''
+    pains: '',
+    ragLinks: '',
+    htmlTemplate: ''
   });
 
   const [contentType, setContentType] = useState<string>('announce');
@@ -97,11 +103,13 @@ const Index = () => {
       date: currentEvent.date || '',
       program: currentEvent.program || '',
       speakers: currentEvent.speakers || '',
-      pains: currentEvent.pains || ''
+      pains: currentEvent.pains || '',
+      ragLinks: currentEvent.ragLinks || '',
+      htmlTemplate: currentEvent.htmlTemplate || ''
     };
 
     setEvents([...events, newEvent]);
-    setCurrentEvent({ name: '', slug: '', date: '', program: '', speakers: '', pains: '' });
+    setCurrentEvent({ name: '', slug: '', date: '', program: '', speakers: '', pains: '', ragLinks: '', htmlTemplate: '' });
     
     toast({
       title: 'Событие добавлено',
@@ -326,6 +334,39 @@ const Index = () => {
                     />
                   </div>
 
+                  <Separator />
+
+                  <div className="space-y-2">
+                    <Label htmlFor="event-rag" className="flex items-center gap-2">
+                      <Icon name="Link" size={16} />
+                      RAG ссылки (Google Docs/Sheets)
+                    </Label>
+                    <Textarea
+                      id="event-rag"
+                      value={currentEvent.ragLinks}
+                      onChange={(e) => setCurrentEvent({ ...currentEvent, ragLinks: e.target.value })}
+                      placeholder="https://docs.google.com/document/d/..., https://docs.google.com/spreadsheets/d/..."
+                      rows={2}
+                    />
+                    <p className="text-xs text-muted-foreground">Ссылки на документы для индексации знаний (через запятую)</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="event-template" className="flex items-center gap-2">
+                      <Icon name="Code" size={16} />
+                      HTML-шаблон письма
+                    </Label>
+                    <Textarea
+                      id="event-template"
+                      value={currentEvent.htmlTemplate}
+                      onChange={(e) => setCurrentEvent({ ...currentEvent, htmlTemplate: e.target.value })}
+                      placeholder="<html>...<!--IF:pain_point-->{{pain_point}}<!--ENDIF-->...</html>"
+                      rows={4}
+                      className="font-mono text-xs"
+                    />
+                    <p className="text-xs text-muted-foreground">Шаблон с плейсхолдерами {{field}} и условными блоками <!--IF:xxx--></p>
+                  </div>
+
                   <Button onClick={handleAddEvent} className="w-full gap-2">
                     <Icon name="Plus" size={16} />
                     Добавить событие
@@ -360,11 +401,28 @@ const Index = () => {
                           <Badge variant="secondary">{event.slug}</Badge>
                         </div>
                       </CardHeader>
-                      <CardContent className="space-y-2 text-sm">
+                      <CardContent className="space-y-3 text-sm">
                         {event.program && (
                           <div>
                             <span className="font-medium text-muted-foreground">Программа:</span>
                             <p className="text-foreground mt-1">{event.program.slice(0, 100)}...</p>
+                          </div>
+                        )}
+                        {event.ragLinks && (
+                          <div>
+                            <span className="font-medium text-muted-foreground flex items-center gap-1">
+                              <Icon name="Link" size={14} />
+                              RAG ссылки:
+                            </span>
+                            <p className="text-foreground mt-1 text-xs break-all">{event.ragLinks.slice(0, 80)}...</p>
+                          </div>
+                        )}
+                        {event.htmlTemplate && (
+                          <div>
+                            <Badge variant="outline" className="gap-1">
+                              <Icon name="Code" size={12} />
+                              Шаблон загружен
+                            </Badge>
                           </div>
                         )}
                       </CardContent>
