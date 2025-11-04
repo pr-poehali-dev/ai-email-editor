@@ -364,7 +364,7 @@ const Index = () => {
                       rows={4}
                       className="font-mono text-xs"
                     />
-                    <p className="text-xs text-muted-foreground">Шаблон с плейсхолдерами {{field}} и условными блоками <!--IF:xxx--></p>
+                    <p className="text-xs text-muted-foreground">Шаблон с плейсхолдерами {'{'}{'{'} field {'}'}{'}'}  и условными блоками {'<'}!--IF:xxx--{'>'}</p>
                   </div>
 
                   <Button onClick={handleAddEvent} className="w-full gap-2">
